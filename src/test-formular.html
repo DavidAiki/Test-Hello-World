@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'none';" />
+  <title>Test Formular – pwp.berlin Rechtsanwälte</title>
+  <link rel="stylesheet" href="pwp-style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-circle">pwp</span>
+        <span class="logo-text">.berlin <strong>RECHTSANWÄLTE</strong></span>
+      </div>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <ul>
+          <li><a href="#">Startseite</a></li>
+          <li><a href="#">Arbeitsgebiete</a></li>
+          <li><a href="#">Über uns</a></li>
+          <li><a href="#" aria-current="page">Kontakt</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <h1>Test Formular</h1>
+      <p>Demonstrationsseite des pwp.berlin Design-Systems</p>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <main class="content">
+    <div class="container">
+      <div class="form-card">
+        <h2>Kontakt aufnehmen</h2>
+        <p class="form-intro">Füllen Sie das Formular aus und wir melden uns bei Ihnen.</p>
+
+        <form action="#" method="post" novalidate>
+          <div class="form-group">
+            <label for="name">Name <span class="required" aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Ihr vollständiger Name"
+              required
+              autocomplete="name"
+              aria-required="true"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-Mail <span class="required" aria-hidden="true">*</span></label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="ihre@email.de"
+              required
+              autocomplete="email"
+              aria-required="true"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="nachricht">Nachricht <span class="required" aria-hidden="true">*</span></label>
+            <textarea
+              id="nachricht"
+              name="nachricht"
+              rows="5"
+              placeholder="Ihre Nachricht..."
+              required
+              aria-required="true"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary">Nachricht senden</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+
+      <div class="footer-col">
+        <h3>Kontakt</h3>
+        <p>pwp.berlin Rechtsanwälte</p>
+        <p>Musterstraße 1</p>
+        <p>10115 Berlin</p>
+        <p><a href="tel:+4930123456">+49 30 123 456</a></p>
+        <p><a href="mailto:info@pwp.berlin">info@pwp.berlin</a></p>
+      </div>
+
+      <div class="footer-col">
+        <h3>Arbeitsgebiete</h3>
+        <ul>
+          <li><a href="#">Arbeitsrecht</a></li>
+          <li><a href="#">Vertragsrecht</a></li>
+          <li><a href="#">Datenschutz</a></li>
+          <li><a href="#">IT-Recht</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>Teilen</h3>
+        <div class="social-icons">
+          <a href="#" aria-label="Facebook" class="social-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn" class="social-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" aria-label="XING" class="social-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.254.22.465.22h3.445c.528 0 .8-.362.96-.655l3.71-6.494-2.397-4.155c-.166-.29-.427-.656-.959-.656H3.648v-.1z"/></svg>
+          </a>
+          <a href="mailto:info@pwp.berlin" aria-label="E-Mail" class="social-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </a>
+        </div>
+        <p class="footer-back"><a href="index.html">← Zurück zur Startseite</a></p>
+      </div>
+
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 pwp.berlin Rechtsanwälte · <a href="#">Impressum</a> · <a href="#">Datenschutz</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>

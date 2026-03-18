@@ -12,17 +12,12 @@ body {
   min-height: 100vh;
   background-color: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-/* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  body {
-    background-color: #1a1a1a;
-  }
-}
-
-main {
-  text-align: center;
+  body { background-color: #1a1a1a; }
 }
 
 h1 {
@@ -31,11 +26,21 @@ h1 {
   letter-spacing: 0.05em;
 }
 
-.hello {
-  color: #0000FF;
+.hello { color: #0000FF; }
+.world { color: #00AA00; margin-left: 0.25em; }
+
+.btn {
+  display: inline-block;
+  background-color: #c8d820;
+  color: #0a2a3a;
+  padding: 12px 28px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.2s;
 }
 
-.world {
-  color: #00AA00;
-  margin-left: 0.25em;
+.btn:hover {
+  background-color: #d8e830;
 }
