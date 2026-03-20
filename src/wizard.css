@@ -302,7 +302,7 @@
   font-family: 'Courier New', monospace;
   font-size: 1.3rem;
   font-weight: bold;
-  color: var(--color-lime);
+  color: var(--color-petrol, #0a2a3a); /* Fix: Petrol statt Lime — WCAG AA Kontrast erfüllt (~12:1 auf weiß) */
   margin-bottom: 16px;
   word-break: break-all;
 }

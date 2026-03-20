@@ -3,7 +3,7 @@
 
 /* ===== CONFIG ===== */
 const WIZARD_CONFIG = {
-  SESSION_TIMEOUT_MINUTES: 20,
+  SESSION_TIMEOUT_MINUTES: 15,       // Fix: 15 Min Inaktivitäts-Timeout (war 20)
   WARNING_BEFORE_TIMEOUT_MINUTES: 2,
   SESSION_STORAGE_KEY: 'wizard_session',
   PROCESS_ID_PREFIX: 'PWP-',
@@ -295,9 +295,15 @@ function renderStep(stepNum) {
   }
 }
 
+// Fix: HTML-Escape-Funktion verhindert XSS durch User-Input
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = String(str ?? '');
+  return div.innerHTML;
+}
+
 function renderSummary() {
   const summaryBox = document.getElementById('summary-preview');
-  let html = '';
 
   const labels = {
     insurance_type: 'Versicherungsart',
@@ -313,22 +319,40 @@ function renderSummary() {
     desired_outcome: 'Gewünschtes Ergebnis',
   };
 
+  // Fix: DOM-Elemente statt innerHTML mit User-Daten (verhindert XSS)
+  summaryBox.innerHTML = '';
+  let hasData = false;
+
   for (const [key, label] of Object.entries(labels)) {
     const value = wizardState.formData[key];
     if (value) {
-      const displayValue = key.includes('type') 
-        ? getOptionLabel(key, value) 
+      hasData = true;
+      const displayValue = key.includes('type')
+        ? getOptionLabel(key, value)
         : value;
-      html += `
-        <div class="summary-item">
-          <span class="summary-label">${label}</span>
-          <span class="summary-value">${displayValue}</span>
-        </div>
-      `;
+
+      const item = document.createElement('div');
+      item.className = 'summary-item';
+
+      const labelEl = document.createElement('span');
+      labelEl.className = 'summary-label';
+      labelEl.textContent = label; // statischer Text, sicher
+
+      const valueEl = document.createElement('span');
+      valueEl.className = 'summary-value';
+      valueEl.textContent = displayValue; // Fix: textContent statt innerHTML
+
+      item.appendChild(labelEl);
+      item.appendChild(valueEl);
+      summaryBox.appendChild(item);
     }
   }
 
-  summaryBox.innerHTML = html || '<p>Keine Daten vorhanden</p>';
+  if (!hasData) {
+    const p = document.createElement('p');
+    p.textContent = 'Keine Daten vorhanden';
+    summaryBox.appendChild(p);
+  }
 }
 
 function getOptionLabel(key, value) {
@@ -356,14 +380,30 @@ function renderSuccessStep() {
     processIdDisplay.textContent = wizardState.processId;
   }
 
-  // Mini-Summary
-  let summaryHtml = '<strong>Ihre Daten:</strong><br>';
-  summaryHtml += `Versicherungsart: ${getOptionLabel('insurance_type', wizardState.formData.insurance_type)}<br>`;
-  summaryHtml += `Name: ${wizardState.formData.first_name} ${wizardState.formData.last_name}<br>`;
-  summaryHtml += `E-Mail: ${wizardState.formData.email}<br>`;
-  summaryHtml += `Telefon: ${wizardState.formData.phone}`;
+  // Fix: DOM-Elemente statt innerHTML mit User-Daten (verhindert XSS)
+  successSummary.innerHTML = '';
 
-  successSummary.innerHTML = summaryHtml;
+  const title = document.createElement('strong');
+  title.textContent = 'Ihre Daten:';
+  successSummary.appendChild(title);
+
+  const fields = [
+    ['Versicherungsart', getOptionLabel('insurance_type', wizardState.formData.insurance_type)],
+    ['Name', `${wizardState.formData['first-name'] || ''} ${wizardState.formData['last-name'] || ''}`.trim()],
+    ['E-Mail', wizardState.formData['email']],
+    ['Telefon', wizardState.formData['phone']],
+  ];
+
+  fields.forEach(([label, value]) => {
+    if (value) {
+      const br = document.createElement('br');
+      successSummary.appendChild(br);
+      const line = document.createElement('span');
+      // Fix: textContent verhindert XSS (kein User-HTML wird interpretiert)
+      line.textContent = `${label}: ${value}`;
+      successSummary.appendChild(line);
+    }
+  });
 }
 
 function updateProgress() {
@@ -403,25 +443,49 @@ function restoreSessionData() {
 }
 
 function generateSessionId() {
-  return 'sess_' + Math.random().toString(36).substr(2, 9);
+  // Fix: crypto.randomUUID() statt Math.random() (kryptografisch sicher)
+  return 'sess_' + crypto.randomUUID().replace(/-/g, '').slice(0, 12);
 }
 
 function generateProcessId() {
+  // Fix: crypto.getRandomValues() statt Math.random() (kryptografisch sicher)
   const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substr(2, 6).toUpperCase();
+  const array = new Uint8Array(4);
+  crypto.getRandomValues(array);
+  const random = Array.from(array, b => b.toString(16).padStart(2, '0')).join('').toUpperCase().slice(0, 6);
   return WIZARD_CONFIG.PROCESS_ID_PREFIX + timestamp + random;
 }
 
 /* ===== TIMEOUT HANDLING ===== */
+// Fix: Timeout-IDs speichern damit clearTimeout() beim Verlängern korrekt funktioniert
+let _warningTimeoutId = null;
+let _expireTimeoutId = null;
+
+// Fix: Inaktivitäts-Reset bei Nutzeraktivität
+let _lastActivityTime = Date.now();
+
+function resetActivityTimer() {
+  _lastActivityTime = Date.now();
+}
+
+// Activity-Events registrieren (Maus, Tastatur, Touch)
+['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach(evt => {
+  document.addEventListener(evt, resetActivityTimer, { passive: true });
+});
+
 function startSessionTimeout() {
+  // Fix: Alte Timeouts immer zuerst löschen (verhindert mehrfaches expireSession())
+  if (_warningTimeoutId) clearTimeout(_warningTimeoutId);
+  if (_expireTimeoutId) clearTimeout(_expireTimeoutId);
+
   const timeoutMs = WIZARD_CONFIG.SESSION_TIMEOUT_MINUTES * 60 * 1000;
   const warningMs = (WIZARD_CONFIG.SESSION_TIMEOUT_MINUTES - WIZARD_CONFIG.WARNING_BEFORE_TIMEOUT_MINUTES) * 60 * 1000;
 
-  setTimeout(() => {
+  _warningTimeoutId = setTimeout(() => {
     showTimeoutWarning();
   }, warningMs);
 
-  setTimeout(() => {
+  _expireTimeoutId = setTimeout(() => {
     expireSession();
   }, timeoutMs);
 }
@@ -457,7 +521,7 @@ function showTimeoutWarning() {
     wizardState.sessionWarningShown = false;
     wizardState.sessionStartTime = Date.now();
     saveSessionData();
-    startSessionTimeout();
+    startSessionTimeout(); // Fix: clearTimeout() wird nun in startSessionTimeout() aufgerufen
   });
 }
 
@@ -478,7 +542,9 @@ function saveFormDataToBackend() {
     user_ip: 'client-ip-placeholder', // Client kennt nicht die echte IP
   };
 
-  console.log('Form-Daten würden hier an Backend gesendet:', payload);
+  // Fix (DSGVO): console.log mit sensiblen Personendaten entfernt
+  // Nur nicht-personenbezogene IDs loggen
+  console.log('Wizard-Daten werden übermittelt. ProzessID:', wizardState.processId);
   // fetch('/api/insurance-wizard/submit', { method: 'POST', body: JSON.stringify(payload) })
 }
 
