@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';" />
+  <title>Versicherungsfall melden – pwp.berlin Rechtsanwälte</title>
+  <link rel="stylesheet" href="pwp-style.css" />
+  <link rel="stylesheet" href="wizard.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-circle">pwp</span>
+        <span class="logo-text">.berlin <strong>RECHTSANWÄLTE</strong></span>
+      </div>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <ul>
+          <li><a href="index.html">Startseite</a></li>
+          <li><a href="#">Arbeitsgebiete</a></li>
+          <li><a href="#">Über uns</a></li>
+          <li><a href="test-formular.html">Kontakt</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- SESSION TIMEOUT WARNING -->
+  <div id="timeout-warning" class="timeout-warning" role="alert" aria-live="assertive" hidden>
+    <div class="timeout-warning-inner">
+      <span>⚠️ Ihre Sitzung läuft in <strong id="timeout-countdown">2:00</strong> Minuten ab. Klicken Sie auf "Verlängern" um fortzufahren.</span>
+      <button id="timeout-extend-btn" class="btn-extend">Verlängern</button>
+    </div>
+  </div>
+
+  <!-- SESSION EXPIRED MODAL -->
+  <div id="session-expired-modal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="expired-title">
+    <div class="modal-box">
+      <h2 id="expired-title">⏱️ Sitzung abgelaufen</h2>
+      <p>Ihre Sitzung ist abgelaufen. Ihre bisherigen Daten gehen leider verloren. Bitte starten Sie den Vorgang erneut.</p>
+      <button onclick="location.reload()" class="btn-primary">Neu starten</button>
+    </div>
+  </div>
+
+  <!-- WIZARD MAIN -->
+  <main class="wizard-main">
+    <div class="container">
+
+      <!-- PROGRESS BAR -->
+      <div class="progress-container" id="progress-container">
+        <div class="progress-steps" id="progress-steps"></div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+        <div class="progress-label" id="progress-label">Schritt 1 von 6</div>
+      </div>
+
+      <!-- WIZARD STEPS -->
+      <div class="wizard-card" id="wizard-card">
+
+        <!-- STEP 1: Versicherungsfall -->
+        <div class="wizard-step" id="step-1">
+          <h2 class="step-title">Schritt 1: Versicherungsfall</h2>
+          <p class="step-desc">Bitte wählen Sie Ihre Versicherungsart und beschreiben Sie Ihr Anliegen.</p>
+
+          <div class="form-group">
+            <label for="insurance-type">Versicherungsart <span class="required">*</span></label>
+            <select id="insurance-type" name="insurance-type" required aria-required="true">
+              <option value="">– Bitte wählen –</option>
+              <option value="pkv">Private Krankenversicherung</option>
+              <option value="kfz">KFZ-Versicherung</option>
+              <option value="rechtsschutz">Rechtsschutzversicherung</option>
+              <option value="haftpflicht">Haftpflichtversicherung</option>
+              <option value="kreditausfall">Kreditausfallversicherung</option>
+            </select>
+            <span class="field-error" id="insurance-type-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+
+          <div class="form-group" id="problem-group" hidden>
+            <label for="problem-type">Problem / Anliegen <span class="required">*</span></label>
+            <select id="problem-type" name="problem-type" required aria-required="true">
+              <option value="">– Bitte wählen –</option>
+            </select>
+            <span class="field-error" id="problem-type-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+
+          <div class="hint-box" id="hint-box" hidden>
+            <span class="hint-icon">ℹ️</span>
+            <span id="hint-text"></span>
+          </div>
+
+          <div class="not-relevant-box" id="not-relevant-box" hidden>
+            <span class="warn-icon">⚠️</span>
+            <p>Wir können diesen Fall leider nicht bearbeiten. Die Kreditausfallversicherung liegt nicht in unserem Tätigkeitsbereich. Bitte wenden Sie sich an einen spezialisierten Anbieter.</p>
+            <a href="index.html" class="btn-secondary">Zurück zur Startseite</a>
+          </div>
+        </div>
+
+        <!-- STEP 2: Persönliche Daten -->
+        <div class="wizard-step" id="step-2" hidden>
+          <h2 class="step-title">Schritt 2: Persönliche Angaben</h2>
+          <p class="step-desc">Bitte geben Sie Ihre persönlichen Daten ein.</p>
+
+          <div class="form-group">
+            <label for="first-name">Vorname <span class="required">*</span></label>
+            <input type="text" id="first-name" name="first-name" autocomplete="given-name" aria-required="true" placeholder="Ihr Vorname" />
+            <span class="field-error" id="first-name-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+          <div class="form-group">
+            <label for="last-name">Nachname <span class="required">*</span></label>
+            <input type="text" id="last-name" name="last-name" autocomplete="family-name" aria-required="true" placeholder="Ihr Nachname" />
+            <span class="field-error" id="last-name-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+          <div class="form-group">
+            <label for="email">E-Mail <span class="required">*</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" aria-required="true" placeholder="ihre@email.de" />
+            <span class="field-error" id="email-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+          <div class="form-group">
+            <label for="phone">Telefon <span class="required">*</span></label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" aria-required="true" placeholder="+49 30 123456" />
+            <span class="field-error" id="phone-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+        </div>
+
+        <!-- STEP 3: Versicherungsdaten -->
+        <div class="wizard-step" id="step-3" hidden>
+          <h2 class="step-title">Schritt 3: Versicherungsdaten</h2>
+          <p class="step-desc">Bitte geben Sie die Daten Ihrer Versicherung ein.</p>
+
+          <div class="form-group">
+            <label for="insurance-company">Versicherungsgesellschaft <span class="required">*</span></label>
+            <input type="text" id="insurance-company" name="insurance-company" aria-required="true" placeholder="z.B. Allianz, AXA, ..." />
+            <span class="field-error" id="insurance-company-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+          <div class="form-group">
+            <label for="policy-number">Versicherungsnummer <span class="required">*</span></label>
+            <input type="text" id="policy-number" name="policy-number" aria-required="true" placeholder="z.B. 123-456-789" />
+            <span class="field-error" id="policy-number-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+          <div class="form-group">
+            <label for="incident-date">Datum des Vorfalls <span class="required">*</span></label>
+            <input type="date" id="incident-date" name="incident-date" aria-required="true" />
+            <span class="field-error" id="incident-date-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+        </div>
+
+        <!-- STEP 4: Fallbeschreibung -->
+        <div class="wizard-step" id="step-4" hidden>
+          <h2 class="step-title">Schritt 4: Fallbeschreibung</h2>
+          <p class="step-desc">Beschreiben Sie Ihren Fall so ausführlich wie möglich.</p>
+
+          <div class="form-group">
+            <label for="case-description">Beschreibung des Falls <span class="required">*</span></label>
+            <textarea id="case-description" name="case-description" rows="6" aria-required="true" placeholder="Bitte beschreiben Sie Ihren Fall ausführlich..."></textarea>
+            <span class="field-error" id="case-description-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+          <div class="form-group">
+            <label for="desired-outcome">Gewünschtes Ergebnis <span class="required">*</span></label>
+            <input type="text" id="desired-outcome" name="desired-outcome" aria-required="true" placeholder="Was erhoffen Sie sich?" />
+            <span class="field-error" id="desired-outcome-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+        </div>
+
+        <!-- STEP 5: Weitere Angaben (nur bei KFZ Unfall) -->
+        <div class="wizard-step" id="step-5" hidden>
+          <h2 class="step-title">Schritt 5: Weitere Angaben</h2>
+          <p class="step-desc" id="step5-desc">Bitte machen Sie weitere Angaben zu Ihrem Fall.</p>
+
+          <div class="form-group">
+            <label for="additional-info">Zusätzliche Informationen <span class="required">*</span></label>
+            <textarea id="additional-info" name="additional-info" rows="4" aria-required="true" placeholder="Weitere relevante Informationen..."></textarea>
+            <span class="field-error" id="additional-info-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+          <div class="form-group">
+            <label for="witness">Zeugen / Beteiligte <span class="required">*</span></label>
+            <input type="text" id="witness" name="witness" aria-required="true" placeholder="Namen und Kontaktdaten falls vorhanden, sonst 'keine'" />
+            <span class="field-error" id="witness-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+        </div>
+
+        <!-- STEP 6: Zustimmung & Datenschutz -->
+        <div class="wizard-step" id="step-6" hidden>
+          <h2 class="step-title">Schritt 6: Zustimmung & Datenschutz</h2>
+          <p class="step-desc">Bitte überprüfen Sie Ihre Angaben und stimmen Sie der Datenspeicherung zu.</p>
+
+          <div class="summary-box" id="summary-preview"></div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="consent-checkbox" name="consent" aria-required="true" />
+              <span>Ich stimme der Speicherung meiner Daten gemäß der <a href="#" target="_blank">Datenschutzerklärung</a> zu. <span class="required">*</span></span>
+            </label>
+            <span class="field-error" id="consent-error" hidden>Dies ist ein Pflichtfeld, bitte ausfüllen!</span>
+          </div>
+
+          <div class="backend-error" id="backend-error" hidden>
+            <span>❌ Fehler beim Speichern. Bitte versuchen Sie es später erneut.</span>
+          </div>
+        </div>
+
+        <!-- STEP 7: SUCCESS -->
+        <div class="wizard-step" id="step-7" hidden>
+          <div class="success-content">
+            <div class="success-icon">✅</div>
+            <h2>Ihr Antrag wurde erfolgreich übermittelt!</h2>
+            <p>Vielen Dank für Ihre Anfrage. Wir werden uns so schnell wie möglich bei Ihnen melden.</p>
+
+            <div class="process-id-box">
+              <p class="process-id-label">Ihre ProzessID:</p>
+              <p class="process-id-value" id="process-id-display"></p>
+              <div class="process-id-actions">
+                <button class="btn-secondary" id="copy-process-id">📋 Kopieren</button>
+                <button class="btn-secondary" onclick="window.print()">🖨️ Drucken</button>
+              </div>
+              <p class="copy-confirm" id="copy-confirm" hidden>✅ Kopiert!</p>
+            </div>
+
+            <div class="success-summary" id="success-summary"></div>
+            <a href="index.html" class="btn-primary" style="display:inline-block;margin-top:24px;">Zurück zur Startseite</a>
+          </div>
+        </div>
+
+      </div><!-- end wizard-card -->
+
+      <!-- NAVIGATION BUTTONS -->
+      <div class="wizard-nav" id="wizard-nav">
+        <button class="btn-cancel" id="cancel-btn" onclick="confirmCancel()">Abbrechen</button>
+        <div class="wizard-nav-right">
+          <button class="btn-secondary" id="back-btn" hidden onclick="wizardBack()">← Zurück</button>
+          <button class="btn-primary" id="next-btn" onclick="wizardNext()">Weiter →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h3>Kontakt</h3>
+        <p>pwp.berlin Rechtsanwälte</p>
+        <p>Musterstraße 1, 10115 Berlin</p>
+        <p><a href="tel:+4930123456">+49 30 123 456</a></p>
+        <p><a href="mailto:info@pwp.berlin">info@pwp.berlin</a></p>
+      </div>
+      <div class="footer-col">
+        <h3>Arbeitsgebiete</h3>
+        <ul>
+          <li><a href="#">Versicherungsrecht</a></li>
+          <li><a href="#">Vertragsrecht</a></li>
+          <li><a href="#">Datenschutz</a></li>
+          <li><a href="#">IT-Recht</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Rechtliches</h3>
+        <ul>
+          <li><a href="#">Impressum</a></li>
+          <li><a href="#">Datenschutz</a></li>
+          <li><a href="#">AGB</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 pwp.berlin Rechtsanwälte · <a href="#">Impressum</a> · <a href="#">Datenschutz</a></p>
+    </div>
+  </footer>
+
+  <script src="wizard.js"></script>
+</body>
+</html>
